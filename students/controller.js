@@ -53,11 +53,17 @@ const signup = (req, res) => {
   const { name, email, password } = req.body;
   pool.query(queries.checkEmailExists, [email], (error, result) => {
     if (result.rows.length) {
-      res.send("email already exists");
+      return res.send("email already exists");
     }
     pool.query(queries.userAdd, [name, email, password], (error, result) => {
       if (error) throw error;
-      res.status(201).send("user created successfully");
+      const newUser = {
+        name: name,
+        email: email,
+      };
+      return res
+        .status(201)
+        .json({ message: "user created successfully", newUser });
     });
   });
 };
